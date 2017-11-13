@@ -22,11 +22,16 @@ func ElizaResponse(str string) (string, string) {
 	random := []string{"I’m not sure what you’re trying to say. Could you explain it to me?",
 		"How does that make you feel?",
 		"Why do you say that?"}
-	matched, err := regexp.MatchString(`(?i)\bfather\b`, human)
-	fmt.Println(matched, err)
+
+	matched, _ := regexp.MatchString(`(?i)\bfather\b`, human)
+	if matched {
+
+		return human, "Why don’t you tell me more about your father?"
+	}
 	rand.Seed(time.Now().UnixNano())
 	randIndex := rand.Intn(len(random))
 	return human, random[randIndex]
+
 }
 func main() {
 	fmt.Println(ElizaResponse("People say I look like both my mother and father.\n"))
