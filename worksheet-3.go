@@ -9,6 +9,7 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"regexp"
 	"time"
 )
 
@@ -17,17 +18,24 @@ import (
  */
 func ElizaResponse(str string) (string, string) {
 	human := str
-	rand.Seed(time.Now().UnixNano())
+
 	random := []string{"I’m not sure what you’re trying to say. Could you explain it to me?",
 		"How does that make you feel?",
 		"Why do you say that?"}
-
-	return human, random[rand.Intn(3-0)]
+	matched, err := regexp.MatchString(`(?i)\bfather\b`, human)
+	fmt.Println(matched, err)
+	rand.Seed(time.Now().UnixNano())
+	randIndex := rand.Intn(len(random))
+	return human, random[randIndex]
 }
 func main() {
 	fmt.Println(ElizaResponse("People say I look like both my mother and father.\n"))
+	fmt.Println()
 	fmt.Println(ElizaResponse("Father was a teacher.\n"))
+	fmt.Println()
 	fmt.Println(ElizaResponse("I was my father’s favourite.\n"))
+	fmt.Println()
 	fmt.Println(ElizaResponse("I’m looking forward to the weekend.\n"))
+	fmt.Println()
 	fmt.Println(ElizaResponse("My grandfather was French!\n"))
 }
