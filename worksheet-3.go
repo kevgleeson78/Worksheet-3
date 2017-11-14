@@ -9,7 +9,7 @@
 *https://regexr.com/
 *https://astaxie.gitbooks.io/build-web-application-with-golang/en/07.3.html
 *https://regexone.com/lesson/letters_and_digits?
-*
+*https://github.com/StefanSchroeder/Golang-Regex-Tutorial/blob/master/01-chapter1.markdown
 *
  */
 package main
@@ -21,30 +21,43 @@ import (
 	"time"
 )
 
-/*Function ElizaResponse that takes in and returns a Random String
-*by referencing its array index.
- */
+//Function to take in and return a string
 func ElizaResponse(str string) string {
-
+	//Global response variable for problem 3
 	response := "How do you know you are"
+	//an array of strings for the random response
 	random := []string{"I’m not sure what you’re trying to say. Could you explain it to me?",
 		"How does that make you feel?",
 		"Why do you say that?"}
-
+	/*Regex MatchString function with isolation of the word father
+	*in comparison to the input string to the function ElizaResponse
+	 */
 	matched, _ := regexp.MatchString(`(?i)\bfather\b`, str)
+	//Condition to replace the original string if it has the word "father"
 	if matched {
 		return "Why don’t you tell me more about your father?"
 	}
+	//Match the words "I am" and capture for replacement
 	matchedIAM, _ := regexp.MatchString(`I am`, str)
+	//condition if "I am" is matched
 	if matchedIAM {
+		//Capture "I am" and ignore case for replacement
 		r1 := regexp.MustCompile(`((?i)I Am)`)
-		firstString := r1.ReplaceAllString(str, response)
+		/*create variable to add the response global string
+		*to the input string minus the captured expression.
+		 */firstString := r1.ReplaceAllString(str, response)
+		//Isolate any full stop at the end of each input sentnce
 		r1 = regexp.MustCompile(`(\.)`)
+		//Second variable to append a "?" and replace any "."
 		secondString := r1.ReplaceAllString(firstString, "?")
+		//Return the final version of the string
 		return secondString
 	}
+	//Get time to seed a number to ensure a valid random sequence
 	rand.Seed(time.Now().UnixNano())
+	//Get random number from the length of the array of random struct
 	randIndex := rand.Intn(len(random))
+	//Return a random index of the array
 	return random[randIndex]
 }
 func main() {
