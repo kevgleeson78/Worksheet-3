@@ -42,7 +42,8 @@ func ElizaResponse(str string) string {
 	//condition if "I am" is matched
 	if matchedIAM {
 		//Capture "I am" and ignore case for replacement
-		r1 := regexp.MustCompile(`((?i)I Am)`)
+		//Also Capture "Im" and "I'm" with ignore case covers different combinations
+		r1 := regexp.MustCompile(`((?i)I Am|Im|I'm)`)
 		/*create variable to add the response global string
 		*to the input string minus the captured expression.
 		 */firstString := r1.ReplaceAllString(str, response)
@@ -77,7 +78,7 @@ func main() {
 	fmt.Println(ElizaResponse("I am not happy with your responses."))
 	fmt.Println("I am not sure that you understand the effect that your questions are having on me.")
 	fmt.Println(ElizaResponse("I am not sure that you understand the effect that your questions are having on me."))
-	fmt.Println("I am supposed to just take what you’re saying at face value?")
+	fmt.Println("Im supposed to just take what you’re saying at face value?")
 	fmt.Println(ElizaResponse("I am supposed to just take what you’re saying at face value?"))
 	fmt.Println()
 }
