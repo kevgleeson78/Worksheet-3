@@ -14,6 +14,7 @@
 *https://gist.github.com/ianmcloughlin/c4c2b8dc586d06943f54b75d9e2250fe
 *https://stackoverflow.com/questions/10196462/regex-word-boundary-excluding-the-hyphen
 *https://gist.github.com/ianmcloughlin/c4c2b8dc586d06943f54b75d9e2250fe
+*https://stackoverflow.com/questions/47356475/apostrophe-in-word-not-being-recognized-for-string-replace/47357958#47357958
  */
 package main
 
@@ -28,7 +29,7 @@ import (
 //Function ElizaResponse to take in and return a string
 func ElizaResponse(str string) string {
 	//Adapted from https://gist.github.com/ianmcloughlin/c4c2b8dc586d06943f54b75d9e2250fe
-	//	replace := "How do you know you are"
+	replace := "How do you know you are"
 
 	/*Regex MatchString function with isolation of the word "father"
 	*with a boundry ignore case regex command.
@@ -78,8 +79,8 @@ func ElizaResponse(str string) string {
 		//A space is need for teh regular expression (\b[^\w']|$)
 		//as it dosent allow the word you're to be split into three parts.
 		//If the space is not put in as the second argument it will return
-		//one continious string.
-		return strings.Join(tokens, ` `)
+		//one continuous string.
+		return replace + strings.Join(tokens, ` `)
 
 	}
 
