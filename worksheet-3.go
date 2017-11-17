@@ -29,7 +29,6 @@ import (
 //Function ElizaResponse to take in and return a string
 func ElizaResponse(str string) string {
 	//Adapted from https://gist.github.com/ianmcloughlin/c4c2b8dc586d06943f54b75d9e2250fe
-	replace := "How do you know you are"
 
 	/*Regex MatchString function with isolation of the word "father"
 	*with a boundry ignore case regex command.
@@ -39,13 +38,14 @@ func ElizaResponse(str string) string {
 	matched {
 		return "Why don’t you tell me more about your father?"
 	}
-	r1 := regexp.MustCompile(`(?i)\bI'?\s*a?m\b`)
+	r1 := regexp.MustCompile(`(?i)I'?\s*a?m|How are you`)
 
 	//Match the words "I am" and capture for replacement
 	matched := r1.MatchString(str)
 
 	//condition if "I am" is matched
 	if matched {
+
 		//Only keep the captured part of the string
 		//Concat the new opening line at the end of the function
 		capturedString := r1.ReplaceAllString(str, "$1")
@@ -53,14 +53,15 @@ func ElizaResponse(str string) string {
 		//To prevent "you're"  or any word with a "'" from getting split into three tokens
 		boundaries := regexp.MustCompile(`(\b[^\w']|$)`)
 		tokens := boundaries.Split(capturedString, -1)
-		fmt.Println(tokens)
+
 		// List the reflections.
 		reflections := [][]string{
+			{`feeling`, ` ok`},
+			{`your`, ` my`},
 			{`you're`, `I'm`},
-			{`I`, `you`},
-			{`your`, `my`},
-			{`me`, `you`},
 			{`you`, `I`},
+			{`I`, `you`},
+			{`me`, `you`},
 			{`my`, `your`},
 			{`\.`, `?`},
 		}
@@ -74,13 +75,13 @@ func ElizaResponse(str string) string {
 				}
 			}
 		}
-
+		fmt.Println(tokens)
 		// Put the tokens back together.
 		//A space is need for teh regular expression (\b[^\w']|$)
 		//as it dosent allow the word you're to be split into three parts.
 		//If the space is not put in as the second argument it will return
 		//one continuous string.
-		return replace + strings.Join(tokens, ` `)
+		return "How do you know you are " + strings.Join(tokens, " ")
 
 	}
 
@@ -123,13 +124,18 @@ func main() {
 	fmt.Println("Im supposed to just take what you're saying at face value?")
 	fmt.Println(ElizaResponse("Im supposed to just take what you're saying at face value?"))
 	fmt.Println()
-	fmt.Println("Hello my name is Kevin")
-	fmt.Println(ElizaResponse("Hello my name is Kevin"))
+
+	//Test input One
+	fmt.Println("How are you feeling.")
+	fmt.Println(ElizaResponse("How are you feeling."))
 	fmt.Println()
-	fmt.Println("How are you feeling")
-	fmt.Println(ElizaResponse("How are you feeling"))
+	//Test Input Two
+	fmt.Println("I am your friend.")
+	fmt.Println(ElizaResponse("I am your friend."))
 	fmt.Println()
-	fmt.Println("Im have a hole in my shoe")
-	fmt.Println(ElizaResponse("Im supposed"))
+	//Test input Three
+	fmt.Println("I am feeling sad.")
+	fmt.Println(ElizaResponse("I am feeling sad."))
 	fmt.Println()
+
 }
