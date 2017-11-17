@@ -11,6 +11,9 @@
 *https://regexone.com/lesson/letters_and_digits?
 *https://github.com/StefanSchroeder/Golang-Regex-Tutorial/blob/master/01-chapter1.markdown
 *https://regex101.com/r/vH0iN5/2
+*https://gist.github.com/ianmcloughlin/c4c2b8dc586d06943f54b75d9e2250fe
+*https://stackoverflow.com/questions/10196462/regex-word-boundary-excluding-the-hyphen
+*https://gist.github.com/ianmcloughlin/c4c2b8dc586d06943f54b75d9e2250fe
  */
 package main
 
@@ -18,71 +21,80 @@ import (
 	"fmt"
 	"math/rand"
 	"regexp"
+	"strings"
 	"time"
 )
 
-//Function to take in and return a string
+//Function ElizaResponse to take in and return a string
 func ElizaResponse(str string) string {
-	//Global response variable for problem 3
-	response := "How do you know you are"
+	//Adapted from https://gist.github.com/ianmcloughlin/c4c2b8dc586d06943f54b75d9e2250fe
+	//	replace := "How do you know you are"
 
-	//pronuon3 := "you"
-	//an array of strings for the random response
-	random := []string{"I’m not sure what you’re trying to say. Could you explain it to me?",
-		"How does that make you feel?",
-		"Why do you say that?"}
-	/*Regex MatchString function with isolation of the word father
-	*in comparison to the input string to the function ElizaResponse
+	/*Regex MatchString function with isolation of the word "father"
+	*with a boundry ignore case regex command.
 	 */
-	matched, _ := regexp.MatchString(`(?i)\bfather\b`, str)
+	if matched, _ := regexp.MatchString(`(?i)\bfather\b`, str);
 	//Condition to replace the original string if it has the word "father"
-	if matched {
+	matched {
 		return "Why don’t you tell me more about your father?"
 	}
-	//Match the words "I am" and capture for replacement
-	matchedIAM, _ := regexp.MatchString(`((?i)\bI'?\s*a?m\b)`, str)
-	//condition if "I am" is matched
-	if matchedIAM {
-		r2 := regexp.MustCompile(`(\byou\b)`)
+	r1 := regexp.MustCompile(`(?i)\bI'?\s*a?m\b`)
 
-		respronoun := r2.ReplaceAllString(str, "I")
-		r2 = regexp.MustCompile(`((?i)\byou'?\s*r?e\b)`)
-		respronoun1 := r2.ReplaceAllString(respronoun, "I'm")
-		r2 = regexp.MustCompile(`(\byour\b)`)
-		respronoun2 := r2.ReplaceAllString(respronoun1, "my")
-		//Capture "I am" and ignore case for replacement
-		//Also Capture "Im" and "I'm" with ignore case covers different combinations
-		r1 := regexp.MustCompile(`((?i)\bI'?\s*a?m\b)`)
-		/*create variable to add the response global string
-		*to the input string minus the captured expression.
-		 */
-		firstString := r1.ReplaceAllString(respronoun2, response)
-		//Isolate any full stop at the end of each input sentnce
-		r1 = regexp.MustCompile(`(\.)`)
-		//Second variable to append a "?" and replace any "."
-		secondString := r1.ReplaceAllString(firstString, "?")
-		//Return the final version of the string
-		r1 = regexp.MustCompile(`(me)`)
-		thirdString := r1.ReplaceAllString(secondString, "you")
-		r1 = regexp.MustCompile(`(I're)`)
-		fourthString := r1.ReplaceAllString(thirdString, "I'm")
-		return fourthString
-	}
 	//Match the words "I am" and capture for replacement
-	matchedHello, _ := regexp.MatchString(`((?i)\bHello\b)`, str)
+	matched := r1.MatchString(str)
+
 	//condition if "I am" is matched
-	if matchedHello {
-		return "this is working now for the logic :)"
+	if matched {
+		//Only keep the captured part of the string
+		//Concat the new opening line at the end of the function
+		capturedString := r1.ReplaceAllString(str, "$1")
+		//adapted from https://stackoverflow.com/questions/10196462/regex-word-boundary-excluding-the-hyphen
+		//To prevent "you're"  or any word with a "'" from getting split into three tokens
+		boundaries := regexp.MustCompile(`(\b[^\w']|$)`)
+		tokens := boundaries.Split(capturedString, -1)
+		fmt.Println(tokens)
+		// List the reflections.
+		reflections := [][]string{
+			{`you're`, `I'm`},
+			{`I`, `you`},
+			{`your`, `my`},
+			{`me`, `you`},
+			{`you`, `I`},
+			{`my`, `your`},
+			{`\.`, `?`},
+		}
+
+		// Loop through each token, reflecting it if there's a match.
+		for i, token := range tokens {
+			for _, reflection := range reflections {
+				if matched, _ := regexp.MatchString(reflection[0], token); matched {
+					tokens[i] = reflection[1]
+					break
+				}
+			}
+		}
+
+		// Put the tokens back together.
+		//A space is need for teh regular expression (\b[^\w']|$)
+		//as it dosent allow the word you're to be split into three parts.
+		//If the space is not put in as the second argument it will return
+		//one continious string.
+		return strings.Join(tokens, ` `)
+
 	}
-	//Get time to seed a number to ensure a valid random sequence
-	rand.Seed(time.Now().UnixNano())
+
 	//Get random number from the length of the array of random struct
-	randIndex := rand.Intn(len(random))
+	//an array of strings for the random response
+	response := []string{"I’m not sure what you’re trying to say. Could you explain it to me?",
+		"How does that make you feel?",
+		"Why do you say that?"}
 	//Return a random index of the array
-	return random[randIndex]
+	return response[rand.Intn(len(response))]
 
 }
+
 func main() {
+	rand.Seed(time.Now().UTC().UnixNano())
 	fmt.Println("People say I look like both my mother and father.")
 	fmt.Println(ElizaResponse("People say I look like both my mother and father."))
 	fmt.Println()
@@ -93,7 +105,7 @@ func main() {
 	fmt.Println(ElizaResponse("I was my father’s favourite."))
 	fmt.Println()
 	fmt.Println("I'm looking forward to the weekend.")
-	fmt.Println(ElizaResponse("I’m looking forward to the weekend."))
+	fmt.Println(ElizaResponse("I'm looking forward to the weekend."))
 	fmt.Println()
 	fmt.Println("My grandfather was French!")
 	fmt.Println(ElizaResponse("My grandfather was French!"))
