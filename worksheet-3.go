@@ -26,6 +26,41 @@ import (
 	"time"
 )
 
+func Reflections(capturedString string) string {
+	//adapted from https://stackoverflow.com/questions/10196462/regex-word-boundary-excluding-the-hyphen
+	//To prevent "you're"  or any word with a "'" from getting split into three tokens
+	boundaries := regexp.MustCompile(`(\b[^\w']|$)`)
+	tokens := boundaries.Split(capturedString, -1)
+
+	// List the reflections.
+	reflections := [][]string{
+
+		{`your`, ` my`},
+		{`you're`, `I'm`},
+		{`you`, `I`},
+		{`I`, `you`},
+		{`me`, `you`},
+		{`my`, `your`},
+	}
+
+	// Loop through each token, reflecting it if there's a match.
+	for i, token := range tokens {
+		for _, reflection := range reflections {
+			if matched, _ := regexp.MatchString(reflection[0], token); matched {
+				tokens[i] = reflection[1]
+				break
+			}
+		}
+	}
+
+	// Put the tokens back together.
+	//A space is need for teh regular expression (\b[^\w']|$)
+	//as it dosent allow the word you're to be split into three parts.
+	//If the space is not put in as the second argument it will return
+	//one continuous string.
+	return strings.Join(tokens, " ")
+}
+
 //Function ElizaResponse to take in and return a string
 func ElizaResponse(str string) string {
 	//Adapted from https://gist.github.com/ianmcloughlin/c4c2b8dc586d06943f54b75d9e2250fe
@@ -38,60 +73,49 @@ func ElizaResponse(str string) string {
 	matched {
 		return "Why don’t you tell me more about your father?"
 	}
-	r1 := regexp.MustCompile(`(?i)I'?\s*a?m|How are you`)
+	r1 := regexp.MustCompile(`(?i)I'?\s*a?m`)
 
 	//Match the words "I am" and capture for replacement
 	matched := r1.MatchString(str)
 
 	//condition if "I am" is matched
 	if matched {
-
+		replacementString := "How do you know that you are"
 		//Only keep the captured part of the string
+		//Pass in everything after the captured part of the statement to the function Reflections
+		response := Reflections(r1.ReplaceAllString(str, "$1"))
 		//Concat the new opening line at the end of the function
-		capturedString := r1.ReplaceAllString(str, "$1")
-		//adapted from https://stackoverflow.com/questions/10196462/regex-word-boundary-excluding-the-hyphen
-		//To prevent "you're"  or any word with a "'" from getting split into three tokens
-		boundaries := regexp.MustCompile(`(\b[^\w']|$)`)
-		tokens := boundaries.Split(capturedString, -1)
-
-		// List the reflections.
-		reflections := [][]string{
-			{`feeling`, ` ok`},
-			{`your`, ` my`},
-			{`you're`, `I'm`},
-			{`you`, `I`},
-			{`I`, `you`},
-			{`me`, `you`},
-			{`my`, `your`},
-			{`\.`, `?`},
-		}
-
-		// Loop through each token, reflecting it if there's a match.
-		for i, token := range tokens {
-			for _, reflection := range reflections {
-				if matched, _ := regexp.MatchString(reflection[0], token); matched {
-					tokens[i] = reflection[1]
-					break
-				}
-			}
-		}
-		fmt.Println(tokens)
-		// Put the tokens back together.
-		//A space is need for teh regular expression (\b[^\w']|$)
-		//as it dosent allow the word you're to be split into three parts.
-		//If the space is not put in as the second argument it will return
-		//one continuous string.
-		return "How do you know you are " + strings.Join(tokens, " ")
-
+		return replacementString + response
 	}
-
+	//Capture and replace How are you
+	r1 = regexp.MustCompile(`\bHow are you\b`)
+	matched = r1.MatchString(str)
+	if matched {
+		replacementString := "Why am I"
+		//Only keep the captured part of the string
+		//Pass in everything after the captured part of the statement to the function Reflections
+		response := Reflections(r1.ReplaceAllString(str, "$1"))
+		//Concat the new opening line at the end of the function
+		return replacementString + response
+	}
+	//Capture and replace How are you
+	r1 = regexp.MustCompile(`\bMy name is\b`)
+	matched = r1.MatchString(str)
+	if matched {
+		replacementString := "Hello"
+		//Only keep the captured part of the string
+		//Pass in everything after the captured part of the statement to the function Reflections
+		response := Reflections(r1.ReplaceAllString(str, "$1"))
+		//Concat the new opening line at the end of the function
+		return replacementString + response
+	}
 	//Get random number from the length of the array of random struct
 	//an array of strings for the random response
-	response := []string{"I’m not sure what you’re trying to say. Could you explain it to me?",
+	randomResponse := []string{"I’m not sure what you’re trying to say. Could you explain it to me?",
 		"How does that make you feel?",
 		"Why do you say that?"}
 	//Return a random index of the array
-	return response[rand.Intn(len(response))]
+	return randomResponse[rand.Intn(len(randomResponse))]
 
 }
 
@@ -134,8 +158,8 @@ func main() {
 	fmt.Println(ElizaResponse("I am your friend."))
 	fmt.Println()
 	//Test input Three
-	fmt.Println("I am feeling sad.")
-	fmt.Println(ElizaResponse("I am feeling sad."))
+	fmt.Println("My name is Kevin")
+	fmt.Println(ElizaResponse("My name is Kevin"))
 	fmt.Println()
 
 }
