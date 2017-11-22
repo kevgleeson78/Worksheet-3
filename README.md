@@ -32,3 +32,32 @@ Type the following command
 ```
 6: This will run the application to the terminal window.
 
+#The purpose of this applictaion
+
+The mian purpose of this application is to demonstrate the use of the regexp package with the [Go](https://golang.org/) programming language.
+Firstly a function called elizaResponse is created.
+A string is passed into this function eg. 
+```GO 
+fmt.Println(ElizaResponse("I am happy."))
+```
+The elizaResponse function then takes the input string and checks if the string has matched any regular expression held within the function.
+```Go
+//I am, I'm, Im all matched with ignore case
+r1 := regexp.MustCompile(`(?i)I'?\s*a?m(.*)`)
+
+	//Match the words "I am, Im, I'm" and capture everything else after for replacement
+	matched := r1.MatchString(str)
+
+	//condition if "I am, Im, I'm" is matched
+	if matched {
+
+		//Only keep the captured part of the string
+		//Pass in everything after the captured part of the statement $1 to the function Reflections
+		reflectString := Reflections(r1.ReplaceAllString(str, "$1"))
+		//Concat the reflected sring to the opening response
+		response := "How do you know you are " + reflectString + "?"
+		//return the new string response
+		return response
+    }
+    ```
+
