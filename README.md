@@ -32,7 +32,7 @@ Type the following command
 ```
 6: This will run the application to the terminal window.
 
-#The purpose of this applictaion
+## The purpose of this applictaion
 
 The mian purpose of this application is to demonstrate the use of the regexp package with the [Go](https://golang.org/) programming language.
 Firstly a function called elizaResponse is created.
@@ -44,7 +44,7 @@ The elizaResponse function then takes the input string and checks if the string 
 ```Go
 func Reflections(capturedString string) string {	
 ```
-#Linear process of each function
+## Linear process of each function
 1: The regexp.Mustcompile(`(?i)I'?\s*a?m(.*)`) function captures everything after I am, I'm or Im, all case ignored with the flag (?i) at the beginning of the expression.
 ```Go
 //I am, I'm, Im all matched with ignore case
